@@ -153,4 +153,23 @@
             </build>
         </profile>
     </profiles>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Ilya Evlampiev</name>
+            <email>ilya.evlampiev@gmail.com</email>
+            <organization>IP Evlampiev</organization>
+            <organizationUrl>https://github.com/Eljah/xmindjbehavemavenplugin</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:Eljah/xmindjbehavemavenplugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Eljah/xmindjbehavemavenplugin.git</developerConnection>
+        <url>git@github.com:Eljah/xmindjbehavemavenplugin.git</url>
+    </scm>
 </project>
