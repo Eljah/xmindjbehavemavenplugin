@@ -1,4 +1,4 @@
-package mavenplugintest;
+package xmindjbehave.xmind;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -16,23 +16,15 @@ package mavenplugintest;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
-import org.xmind.core.internal.Notes;
-import org.xmind.core.internal.dom.NotesImpl;
-import org.xmind.core.io.ByteArrayStorage;
-import org.xmind.core.io.IStorage;
-import org.xmind.core.marker.IMarkerRef;
 
-import java.io.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -81,32 +73,33 @@ public class GenerateStoriesFromXMind
     }
 
     public static void iterateOverTopic(ITopic itop, String offset, String folderBase) throws IOException {
-        System.out.println(offset + itop.getTitleText());
-        boolean folderCreated = (new File(folderBase)).mkdirs();
+        if (!itop.hasMarker("flag-red")) {
+            System.out.println(offset);
+            boolean folderCreated = (new File(folderBase)).mkdirs();
 
 
-        for (ITopic child : itop.getAllChildren()) {
-            iterateOverTopic(child, offset + " ", folderBase +"\\"+ itop.getTitleText());
+            for (ITopic child : itop.getAllChildren()) {
+                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText());
+            }
+            if (itop.getNotes() != null) {
+                INotes nt = itop.getNotes();
+
+
+                if (!nt.toString().equals("null")) {
+                    IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
+
+                    System.out.println("\r\n\r\nScenario: "
+                            + itop.getTitleText()
+                            + "\r\n\r\n"
+                            + plainContent.getTextContent()
+                            + "\r\n\r\n");
+                    File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
+                    writer.write(plainContent.getTextContent());
+                    writer.close();
+                }
+            }
         }
-        if (itop.getNotes() != null) {
-            INotes nt = itop.getNotes();
-
-
-            if (!nt.toString().equals("null")) {
-                IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
-
-                System.out.println("\r\n\r\nScenario: "
-                        + itop.getTitleText()
-                        + "\r\n\r\n"
-                        + plainContent.getTextContent()
-                        + "\r\n\r\n");
-                File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
-                BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                writer.write(plainContent.getTextContent());
-                writer.close();
-      }
-        }
-
     }
 
 

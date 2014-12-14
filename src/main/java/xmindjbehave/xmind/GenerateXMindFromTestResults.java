@@ -1,4 +1,4 @@
-package mavenplugintest;
+package xmindjbehave.xmind;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -6,10 +6,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.*;
-import org.xmind.core.internal.dom.MarkerRefImpl;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
-import org.xmind.core.marker.IMarkerRef;
 
 import java.io.*;
 import java.util.Date;
