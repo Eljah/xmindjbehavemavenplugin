@@ -24,6 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
+import xmindjbehave.jbehave.JbehaveTextParser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -95,7 +96,8 @@ public class GenerateStoriesFromXMind
                             + "\r\n\r\n");
                     File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
                     BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                    writer.write(plainContent.getTextContent());
+                    JbehaveTextParser jbehaveTextParser = new JbehaveTextParser(plainContent.getTextContent());
+                    writer.write(jbehaveTextParser.run());
                     writer.close();
                 }
             }
