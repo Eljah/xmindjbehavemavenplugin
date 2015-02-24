@@ -7,7 +7,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
-import xmindjbehave.jbehave.JbehaveTextParser;
+import xmindjbehave.jbehave.JBehaveTextProcessor;
 
 import java.io.*;
 import java.nio.file.DirectoryNotEmptyException;
@@ -97,7 +97,7 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindMojo {
                         + "\r\n\r\n");
                 File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
                 BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                JbehaveTextParser jbehaveTextParser = new JbehaveTextParser(plainContent.getTextContent());
+                JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(plainContent.getTextContent());
                 writer.write(jbehaveTextParser.run());
                 writer.close();
             }
