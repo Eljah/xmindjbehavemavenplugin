@@ -4,5 +4,5 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.xmind.core.IWorkbook;
 
 public abstract class AbstractXMindMojo extends AbstractMojo {
-    IWorkbook wb;
+    protected IWorkbook wb;
 }

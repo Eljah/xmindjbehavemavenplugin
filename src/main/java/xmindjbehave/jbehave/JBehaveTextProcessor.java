@@ -62,6 +62,6 @@ public class JBehaveTextProcessor {
         meta=new MetaSubstituteTemplateImpl();
         newWholeText2=meta.parseMeta(newWholeText2);
 
-        return newWholeText2;
+        return newWholeText2.trim();
     }
 }

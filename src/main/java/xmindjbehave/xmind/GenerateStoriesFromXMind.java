@@ -25,6 +25,7 @@ import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
 import xmindjbehave.jbehave.JBehaveTextProcessor;
+import xmindjbehave.jbehave.concatenate.Concatenator;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,40 +39,7 @@ import java.io.IOException;
  */
 @Mojo(name = "generateStoriesFromXMind", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GenerateStoriesFromXMind
-        extends AbstractXMindMojo {
-    /**
-     * Location of the file.
-     */
-    @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
-    private File outputDirectory;
-
-
-    @Parameter(property = "generateStoriesFromXMind.xmindpath", defaultValue = "tests.xmind")
-    private String xmindpath;
-
-
-    public void main() throws IOException, CoreException {
-        String workbookString = xmindpath;
-        //String oldWorkbook = "C:`*`path`*`to`*`oldWorkbook.xmind";
-
-        IWorkbookBuilder builder = Core.getWorkbookBuilder();
-        //IWorkbook Workbook = builder.createWorkbook(workbookString);
-        IStorage ist = new ByteArrayStorage();
-        IEncryptionHandler iench = new IEncryptionHandler() {
-            @Override
-            public String retrievePassword() throws CoreException {
-                return "privet";
-            }
-        };
-
-        wb = builder.loadFromPath(workbookString, ist, iench);
-
-        for (ISheet isheet : wb.getSheets()) {
-            System.out.println(isheet.getId());
-            ITopic root = isheet.getRootTopic();
-            iterateOverTopic(root, "", "src\\test\\resources");
-        }
-    }
+        extends AbstractXMindToSpecsMojo {
 
     public static void iterateOverTopic(ITopic itop, String offset, String folderBase) throws IOException {
         if (!itop.hasMarker("flag-red")) {
@@ -105,49 +73,66 @@ public class GenerateStoriesFromXMind
     }
 
 
+    public static void main(String[] args) {
+        GenerateStoriesFromXMind gen = new GenerateStoriesFromXMind();
+        try {
+            gen.outputDirectory = new File("");
+            gen.xmindpath = "C:\\pegas\\regression2.xmind";
+
+            gen.execute();
+        } catch (MojoExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void execute()
             throws MojoExecutionException {
-        /*
-        File f = outputDirectory;
-
-        if ( !f.exists() )
-        {
-            f.mkdirs();
-        }
-
-        File touch = new File( f, "touch.txt" );
-
-        FileWriter w = null;
-        try
-        {
-            w = new FileWriter( touch );
-
-            w.write( "touch.txt" );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating file " + touch, e );
-        }
-        finally
-        {
-            if ( w != null )
-            {
-                try
-                {
-                    w.close();
-                }
-                catch ( IOException e )
-                {
-                    // ignore
-                }
-            }
-        } */
         try {
-            main();
+            extractAll();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoreException e) {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void iterateOverTopic(ITopic itop, String offset, String folderBase, String textFromTheParentNode) throws IOException {
+        System.out.println(offset);
+        //creating the folder to include the spec extracted from the topic note
+        boolean folderCreated = (new File(folderBase)).mkdirs();
+        //obtaining text from the node if it exists
+        String valueforTheCurrentTopicNote = "";
+        IPlainNotesContent plainContent = (IPlainNotesContent) itop.getNotes().getContent(INotes.PLAIN);
+        if (plainContent != null) {
+            valueforTheCurrentTopicNote = plainContent.getTextContent();
+            Concatenator c = new Concatenator(textFromTheParentNode, valueforTheCurrentTopicNote);
+            valueforTheCurrentTopicNote = c.getResult();
+        }
+        //if there are children we go deeper
+        if (itop.getAllChildren().size() > 0) {
+            for (ITopic child : itop.getAllChildren()) {
+                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText(), valueforTheCurrentTopicNote);
+            }
+        }
+        //else we are creating spec file
+        else {
+            //if only it is marked with the correct flag
+            if (!this.topicOrParentHaveMarker(itop, "flag-red")) {
+                System.out.println("\r\n\r\nScenario: "
+                        + itop.getTitleText()
+                        + "\r\n\r\n"
+                        + valueforTheCurrentTopicNote
+                        + "\r\n\r\n");
+                File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
+                BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
+                JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(valueforTheCurrentTopicNote.trim());
+                writer.write(jbehaveTextParser.run());
+                writer.close();
+            }
+
+        }
+    }
 }
+
+
