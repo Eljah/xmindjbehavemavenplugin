@@ -77,7 +77,7 @@ public class GenerateStoriesFromXMind
         GenerateStoriesFromXMind gen = new GenerateStoriesFromXMind();
         try {
             gen.outputDirectory = new File("");
-            gen.xmindpath = "C:\\pegas\\regression2.xmind";
+            gen.xmindpath = "C:\\pegas\\regression.xmind";
 
             gen.execute();
         } catch (MojoExecutionException e) {
@@ -112,19 +112,19 @@ public class GenerateStoriesFromXMind
         //if there are children we go deeper
         if (itop.getAllChildren().size() > 0) {
             for (ITopic child : itop.getAllChildren()) {
-                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText(), valueforTheCurrentTopicNote);
+                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText().replace(",","").replace("\r","").replace("\n","").replace("\"","").replace("\'","").replace(">","").replace("<","").replace("*","").replace(":","").replace(";","").replace("/","").trim(), valueforTheCurrentTopicNote);
             }
         }
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (!this.topicOrParentHaveMarker(itop, "flag-red")) {
+            if (!this.topicOrParentHaveMarker(itop, "flag-red")&&!valueforTheCurrentTopicNote.trim().equals("")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"
                         + valueforTheCurrentTopicNote
                         + "\r\n\r\n");
-                File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
+                File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText().replace(",","").replace("\r","").replace("\n","").replace("\"","").replace("\'","").replace(">","").replace("<","").replace("*","").replace(":","").replace(";","").replace("/","").trim() + ".story");
                 BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
                 JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(valueforTheCurrentTopicNote.trim());
                 writer.write(jbehaveTextParser.run());
@@ -132,6 +132,7 @@ public class GenerateStoriesFromXMind
             }
 
         }
+
     }
 }
 
