@@ -41,38 +41,8 @@ import java.io.IOException;
 public class GenerateStoriesFromXMind
         extends AbstractXMindToSpecsMojo {
 
-    public static void iterateOverTopic(ITopic itop, String offset, String folderBase) throws IOException {
-        if (!itop.hasMarker("flag-red")) {
-            System.out.println(offset);
-            boolean folderCreated = (new File(folderBase)).mkdirs();
-
-
-            for (ITopic child : itop.getAllChildren()) {
-                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText());
-            }
-            if (itop.getNotes() != null) {
-                INotes nt = itop.getNotes();
-
-
-                if (!nt.toString().equals("null")) {
-                    IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
-
-                    System.out.println("\r\n\r\nScenario: "
-                            + itop.getTitleText()
-                            + "\r\n\r\n"
-                            + plainContent.getTextContent()
-                            + "\r\n\r\n");
-                    File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText() + ".story");
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                    JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(plainContent.getTextContent());
-                    writer.write(jbehaveTextParser.run());
-                    writer.close();
-                }
-            }
-        }
-    }
-
-
+    //needed for testing and debugging
+    @Deprecated
     public static void main(String[] args) {
         GenerateStoriesFromXMind gen = new GenerateStoriesFromXMind();
         try {
@@ -85,16 +55,6 @@ public class GenerateStoriesFromXMind
         }
     }
 
-    public void execute()
-            throws MojoExecutionException {
-        try {
-            extractAll();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void iterateOverTopic(ITopic itop, String offset, String folderBase, String textFromTheParentNode) throws IOException {
@@ -112,7 +72,7 @@ public class GenerateStoriesFromXMind
         //if there are children we go deeper
         if (itop.getAllChildren().size() > 0) {
             for (ITopic child : itop.getAllChildren()) {
-                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText().replace(",","").replace("\r","").replace("\n","").replace("\"","").replace("\'","").replace(">","").replace("<","").replace("*","").replace(":","").replace(";","").replace("/","").trim(), valueforTheCurrentTopicNote);
+                iterateOverTopic(child, offset + " ", folderBase + "\\" + itop.getTitleText().replace(",","").replace("\r", "").replace("\n", "").replace("\"","").replace("\'", "").replace(">", "").replace("<","").replace("*","").replace(":","").replace(";","").replace("/","").trim(), valueforTheCurrentTopicNote);
             }
         }
         //else we are creating spec file

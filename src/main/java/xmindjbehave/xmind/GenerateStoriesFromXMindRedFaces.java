@@ -3,33 +3,27 @@ package xmindjbehave.xmind;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.xmind.core.*;
-import org.xmind.core.io.ByteArrayStorage;
-import org.xmind.core.io.IStorage;
+import org.xmind.core.INotes;
+import org.xmind.core.IPlainNotesContent;
+import org.xmind.core.ITopic;
 import xmindjbehave.jbehave.JBehaveTextProcessor;
 import xmindjbehave.jbehave.concatenate.Concatenator;
 
-import java.io.*;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
- * Created by Ilya Evlampiev on 18.12.14.
+ * Created by Ilya Evlampiev on 27.02.15.
  */
-@Mojo(name = "generateStoriesFromXMindGreenFlag", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo {
-    /**
-     * Location of the file.
-     */
+@Mojo(name = "generateStoriesFromXMindFailedSpecs", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+public class GenerateStoriesFromXMindRedFaces extends AbstractXMindToSpecsMojo {
 
     //needed for testing and debugging
     @Deprecated
     public static void main(String[] args) {
-        GenerateStoriesFromXMindGreenFlag gen = new GenerateStoriesFromXMindGreenFlag();
+        GenerateStoriesFromXMindRedFaces gen = new GenerateStoriesFromXMindRedFaces();
         try {
             gen.outputDirectory = new File("");
             gen.xmindpath = "C:\\pegas\\regression2.xmind";
@@ -63,7 +57,7 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (this.topicOrParentHaveMarker(itop, "flag-green")&&!valueforTheCurrentTopicNote.trim().equals("")) {
+            if (this.topicOrParentHaveMarker(itop, "smiley-angry")&&!valueforTheCurrentTopicNote.trim().equals("")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"

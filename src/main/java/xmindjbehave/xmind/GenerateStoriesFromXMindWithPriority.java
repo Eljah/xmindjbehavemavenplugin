@@ -4,36 +4,39 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.xmind.core.*;
-import org.xmind.core.io.ByteArrayStorage;
-import org.xmind.core.io.IStorage;
+import org.xmind.core.INotes;
+import org.xmind.core.IPlainNotesContent;
+import org.xmind.core.ITopic;
+import org.xmind.core.internal.MarkerRef;
+import org.xmind.core.marker.IMarker;
+import org.xmind.core.marker.IMarkerRef;
 import xmindjbehave.jbehave.JBehaveTextProcessor;
 import xmindjbehave.jbehave.concatenate.Concatenator;
 
-import java.io.*;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Set;
 
 /**
- * Created by Ilya Evlampiev on 18.12.14.
+ * Created by Ilya Evlampiev on 27.02.15.
  */
-@Mojo(name = "generateStoriesFromXMindGreenFlag", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo {
-    /**
-     * Location of the file.
-     */
+@Mojo(name = "generateStoriesFromXMindWithPriority", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+public class GenerateStoriesFromXMindWithPriority  extends AbstractXMindToSpecsMojo {
+
+    @Parameter(property = "generateStoriesFromXMind.priority", defaultValue = "0")
+    protected String priority;
+
 
     //needed for testing and debugging
     @Deprecated
     public static void main(String[] args) {
-        GenerateStoriesFromXMindGreenFlag gen = new GenerateStoriesFromXMindGreenFlag();
+        GenerateStoriesFromXMindWithPriority gen = new GenerateStoriesFromXMindWithPriority();
         try {
             gen.outputDirectory = new File("");
             gen.xmindpath = "C:\\pegas\\regression2.xmind";
-
+            gen.priority="6";
             gen.execute();
         } catch (MojoExecutionException e) {
             e.printStackTrace();
@@ -63,7 +66,15 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (this.topicOrParentHaveMarker(itop, "flag-green")&&!valueforTheCurrentTopicNote.trim().equals("")) {
+            //for (IMarkerRef imr: itop.getMarkerRefs())
+            //{
+            //   System.out.println(imr.toString());
+            //}
+
+
+
+
+            if (this.priorityHigherThan(priority,itop)&&!valueforTheCurrentTopicNote.trim().equals("")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"
@@ -78,5 +89,18 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
 
         }
 
+    }
+
+    public boolean priorityHigherThan(String priority, ITopic comparableTopic)
+    {
+         int prior=Integer.parseInt(priority);
+         Set<IMarkerRef> markers= comparableTopic.getMarkerRefs();
+         int comaprablePrior=0;
+
+         for (int i=1;i<=9;i++)
+         {
+            if (comparableTopic.hasMarker("priority-"+i)) {comaprablePrior=i;break;}
+         }
+         return prior>comaprablePrior;
     }
 }

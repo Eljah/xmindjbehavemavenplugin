@@ -1,5 +1,6 @@
 package xmindjbehave.xmind;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
@@ -118,5 +119,17 @@ public abstract class AbstractXMindToSpecsMojo extends AbstractXMindMojo impleme
         }
         return isEmpty;
     }
+
+    public void execute()
+            throws MojoExecutionException {
+        try {
+            extractAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
