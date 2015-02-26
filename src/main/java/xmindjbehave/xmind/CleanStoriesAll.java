@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Ilya Evlampiev on 27.02.15.
  */
-@Mojo(name = "generateStoriesFromXMind", defaultPhase = LifecyclePhase.CLEAN)
+@Mojo(name = "cleanStories", defaultPhase = LifecyclePhase.CLEAN)
 public class CleanStoriesAll extends AbstractMojo {
     @Parameter(defaultValue = "src\\test\\resources", property = "outputDir", required = true)
     protected String outputDirectory;
