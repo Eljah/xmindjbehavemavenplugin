@@ -1,6 +1,7 @@
 package xmindjbehave.xmind;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.*;
 import org.xmind.core.io.ByteArrayStorage;
@@ -46,7 +47,7 @@ public abstract class AbstractXMindToSpecsMojo extends AbstractXMindMojo impleme
         for (ISheet isheet : wb.getSheets()) {
             System.out.println(isheet.getId());
             ITopic root = isheet.getRootTopic();
-            this.iterateOverTopic(root, "", outputDirectory.getAbsolutePath(),"");
+            this.iterateOverTopic(root, "", outputDirectory.getAbsolutePath(),null);
             cleanupFolders(outputDirectory.getAbsolutePath());
         }
     }
@@ -120,16 +121,14 @@ public abstract class AbstractXMindToSpecsMojo extends AbstractXMindMojo impleme
         return isEmpty;
     }
 
-    public void execute()
-            throws MojoExecutionException {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            extractAll();
+            this.extractAll();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoreException e) {
             e.printStackTrace();
         }
     }
-
-
 }

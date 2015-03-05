@@ -16,10 +16,24 @@ import java.util.Date;
  * Created by Leon on 30.06.14.
  */
 @Mojo(name = "generateXMindFromTestResults", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
-public class GenerateXMindFromTestResults extends AbstractXMindMojo {
+public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
 
-    @Parameter(property = "generateStoriesFromXMind.xmindpath", defaultValue = "tests.xmind")
-    private String xmindpath;
+    //needed for testing and debugging
+    @Deprecated
+    public static void main(String[] args) {
+        GenerateXMindFromTestResults gen = new GenerateXMindFromTestResults();
+        try {
+            gen.outputResultsDir = new File("C:\\pegas\\target\\jbehave");
+            gen.xmindpath = "C:\\pegas\\regression.xmind";
+            gen.xmindprefix = "C:\\pegas\\regression";
+            gen.execute();
+        } catch (MojoExecutionException e) {
+            e.printStackTrace();
+        } catch (MojoFailureException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -47,13 +61,14 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
             System.out.println(isheet.getId());
             ITopic root = isheet.getRootTopic();
             try {
-                iterateOverTopic(root, "", "\\target\\jbehave");
+                iterateOverTopicMarkAllGreen(root, "", outputResultsDir.getPath());
+                iterateOverTopic(root, "", outputResultsDir.getPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         try {
-            wb.save(xmindpath.replace(".xmind", "") + (new Date()).toString().replace(" ", "").replace(":", "") + ".xmind");
+            wb.save(xmindprefix + (new Date()).toString().replace(" ", "").replace(":", "") + ".xmind");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoreException e) {
@@ -62,7 +77,7 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
     }
 
 
-    public static void iterateOverTopic(ITopic itop, String offset, String folderBase) throws IOException {
+    public void iterateOverTopic(ITopic itop, String offset, String folderBase) throws IOException {
         System.out.println(offset + itop.getTitleText());
         boolean folderCreated = (new File(folderBase)).mkdirs();
         String parentbase = folderBase;
@@ -77,21 +92,10 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
             if (!nt.toString().equals("null")) {
                 IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
 
-                System.out.println("\r\n\r\nScenario: "
-                        + itop.getTitleText()
-                        + "\r\n\r\n"
-                        + plainContent.getTextContent()
-                        + "\r\n\r\n");
-
-                /*
-                File newStoryCreated = new File(folderBase+"\\"+itop.getTitleText()+".story");
-                BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                writer.write(plainContent.getTextContent());
-                writer.close();
-                 */
                 BufferedReader br = null;
                 String sCurrentLine;
-                String statsfilepath = folderBase.replace("\\", ".").replace(".test.resources", "target\\jbehave\\").replace(".target.jbehave.", "target\\jbehave\\") + "." + itop.getTitleText() + ".stats";
+                String statsfilepath = outputResultsDir.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "").replace("\\", ".") + "." + itop.getTitleText() + ".stats";
+
 
                 System.out.println("Setting marker of " + statsfilepath + "");
 
@@ -103,8 +107,10 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
                         System.out.println(sCurrentLine);
                         if (sCurrentLine.contains("stepsFailed=")) {
                             if (!sCurrentLine.contains("stepsFailed=0")) {
-                                itop.removeMarker("smiley-smile");
-                                itop.addMarker("smiley-angry");
+                                setMarkerToTopicAndParent(itop, "smiley-angry", "smiley-smile");
+
+                                //itop.removeMarker("smiley-smile");
+                                //itop.addMarker("smiley-angry");
                                 System.out.println("Setting marker of " + statsfilepath + " to smiley-angry (RED)");
 
                             } else {
@@ -115,6 +121,8 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
                         }
                     }
 
+
+                } catch (java.io.FileNotFoundException e) {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -129,4 +137,74 @@ public class GenerateXMindFromTestResults extends AbstractXMindMojo {
         }
 
     }
+
+    public void iterateOverTopicMarkAllGreen(ITopic itop, String offset, String folderBase) throws IOException {
+        System.out.println(offset + itop.getTitleText());
+        boolean folderCreated = (new File(folderBase)).mkdirs();
+        String parentbase = folderBase;
+
+        for (ITopic child : itop.getAllChildren()) {
+            iterateOverTopicMarkAllGreen(child, offset + " ", folderBase + "\\" + itop.getTitleText());
+        }
+        if (itop.getNotes() != null) {
+            INotes nt = itop.getNotes();
+
+
+            if (!nt.toString().equals("null")) {
+                IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
+
+                BufferedReader br = null;
+                String sCurrentLine;
+                String statsfilepath = outputResultsDir.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "").replace("\\", ".") + "." + itop.getTitleText() + ".stats";
+
+
+                System.out.println("Setting marker of " + statsfilepath + "");
+
+                try {
+
+                    br = new BufferedReader(new FileReader(statsfilepath));
+
+                    while ((sCurrentLine = br.readLine()) != null) {
+                        System.out.println(sCurrentLine);
+                        if (sCurrentLine.contains("stepsFailed=")) {
+                            setMarkerToTopicAndParent(itop, "smiley-smile", "smiley-angry");
+                            System.out.println("Structure class is"+itop.getStyleId()+" "+itop.getStyleId());
+
+                        }
+                    }
+
+
+                } catch (java.io.FileNotFoundException e) {
+                    System.out.println("Structure class is"+itop.getStructureClass());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (br != null) br.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+            }
+        }
+
+    }
+
+
+    public void setMarkerToTopicAndParent(ITopic itopic, String markersToAdd, String markersToRemove) {
+        ITopic parent = itopic.getParent();
+        itopic.removeMarker(markersToRemove);
+        itopic.addMarker(markersToAdd);
+
+
+        boolean flag = true;
+        System.out.println("checking topic " + itopic.getTitleText());
+        if (parent == null) {
+        } else {
+            setMarkerToTopicAndParent(parent, markersToAdd, markersToRemove);
+        }
+    }
+
+
 }
