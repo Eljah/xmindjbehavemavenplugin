@@ -31,6 +31,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             gen.xmindpath = "C:\\pegas\\regression.xmind";
             gen.xmindprefix = "C:\\pegas\\regression";
             gen.outputDirectory = new File("");//("C:\\pegas\\src\\test\\resources");
+            gen.useSingleOutput=true;
             gen.execute();
         } catch (MojoExecutionException e) {
             e.printStackTrace();
@@ -73,7 +74,12 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             }
         }
         try {
-            wb.save(xmindprefix + (new Date()).toString().replace(" ", "").replace(":", "") + ".xmind");
+            if (useSingleOutput) {
+                wb.save(xmindprefix + "-LAST.xmind");
+
+            } else {
+                wb.save(xmindprefix + (new Date()).toString().replace(" ", "").replace(":", "") + ".xmind");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoreException e) {

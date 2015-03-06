@@ -1,30 +1,12 @@
 package xmindjbehave.xmind;
 
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.apache.maven.plugin.MojoExecutionException;
-
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.xmind.core.*;
-import org.xmind.core.io.ByteArrayStorage;
-import org.xmind.core.io.IStorage;
+import org.xmind.core.INotes;
+import org.xmind.core.IPlainNotesContent;
+import org.xmind.core.ITopic;
 import xmindjbehave.jbehave.JBehaveTextProcessor;
 import xmindjbehave.jbehave.concatenate.Concatenator;
 
@@ -34,18 +16,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Goal which touches a timestamp file.
- *
- * @deprecated Don't use!
+ * Created by Ilya Evlampiev on 06.03.15.
  */
-@Mojo(name = "generateStoriesFromXMind", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class GenerateStoriesFromXMind
-        extends AbstractXMindToSpecsMojo {
+@Mojo(name = "generateStoriesFromXMindToEditInIDE")
+public class GenerateStoriesFromXMindToEditInIDE extends AbstractXMindToSpecsMojo {
 
     //needed for testing and debugging
     @Deprecated
     public static void main(String[] args) {
-        GenerateStoriesFromXMind gen = new GenerateStoriesFromXMind();
+        GenerateStoriesFromXMindToEditInIDE gen = new GenerateStoriesFromXMindToEditInIDE();
         try {
             gen.outputDirectory = new File("");
             gen.xmindpath = "C:\\pegas\\regression.xmind";
@@ -61,6 +40,7 @@ public class GenerateStoriesFromXMind
 
     @Override
     public void iterateOverTopic(ITopic itop, String offset, String folderBase, String textFromTheParentNode) throws IOException {
+
         System.out.println(offset);
         //creating the folder to include the spec extracted from the topic note
         boolean folderCreated = (new File(folderBase)).mkdirs();
@@ -81,7 +61,9 @@ public class GenerateStoriesFromXMind
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (!this.topicOrParentHaveMarker(itop, "flag-red")&&!valueforTheCurrentTopicNote.trim().equals("")&&!topicOrParentHaveMarker(itop,"symbol-exclam")) {
+            if (this.topicOrParentHaveMarker(itop, "symbol-exclam")) {
+                if(valueforTheCurrentTopicNote.equals("")){valueforTheCurrentTopicNote="Narrative:\n" +
+                        "New test for "+itop.getTitleText();}
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"
@@ -97,8 +79,4 @@ public class GenerateStoriesFromXMind
         }
 
     }
-
-
 }
-
-

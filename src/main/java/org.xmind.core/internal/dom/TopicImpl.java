@@ -505,6 +505,13 @@ public class TopicImpl extends Topic implements ICoreEventSource {
         return notes;
     }
 
+    public void setNotes(INotes notes) {
+        if (notes != null) {
+            this.notes = (NotesImpl)notes;
+        }
+
+    }
+
     public INumbering getNumbering() {
         if (numbering == null) {
             numbering = new NumberingImpl(implementation, this);

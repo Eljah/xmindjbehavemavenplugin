@@ -64,7 +64,7 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (this.topicOrParentHaveMarker(itop, "flag-green")&&!valueforTheCurrentTopicNote.trim().equals("")) {
+            if (this.topicOrParentHaveMarker(itop, "flag-green")&&!valueforTheCurrentTopicNote.trim().equals("")&&!topicOrParentHaveMarker(itop,"symbol-exclam")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"

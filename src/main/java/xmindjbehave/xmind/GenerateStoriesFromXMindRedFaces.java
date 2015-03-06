@@ -4,6 +4,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.xmind.core.INotes;
 import org.xmind.core.IPlainNotesContent;
 import org.xmind.core.ITopic;
@@ -21,13 +22,17 @@ import java.io.IOException;
 @Mojo(name = "generateStoriesFromXMindFailedSpecs", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GenerateStoriesFromXMindRedFaces extends AbstractXMindToSpecsMojo {
 
+    @Parameter(property = "generateStoriesFromXMind.xmindpathredfaces", defaultValue = "tests-LAST.xmind")
+    protected String xmindpath;
+
+
     //needed for testing and debugging
     @Deprecated
     public static void main(String[] args) {
         GenerateStoriesFromXMindRedFaces gen = new GenerateStoriesFromXMindRedFaces();
         try {
             gen.outputDirectory = new File("");
-            gen.xmindpath = "C:\\pegas\\regression2.xmind";
+            gen.xmindpath = "C:\\pegas\\regression-LAST.xmind";
 
             gen.execute();
         } catch (MojoExecutionException e) {
@@ -60,7 +65,7 @@ public class GenerateStoriesFromXMindRedFaces extends AbstractXMindToSpecsMojo {
         //else we are creating spec file
         else {
             //if only it is marked with the correct flag
-            if (this.topicOrParentHaveMarker(itop, "smiley-angry")&&!valueforTheCurrentTopicNote.trim().equals("")) {
+            if (this.topicOrParentHaveMarker(itop, "smiley-angry")&&!valueforTheCurrentTopicNote.trim().equals("")&&!topicOrParentHaveMarker(itop,"symbol-exclam")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"

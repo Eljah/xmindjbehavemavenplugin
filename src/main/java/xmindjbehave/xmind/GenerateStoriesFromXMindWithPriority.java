@@ -77,7 +77,7 @@ public class GenerateStoriesFromXMindWithPriority  extends AbstractXMindToSpecsM
 
 
 
-            if (this.priorityHigherThan(priority,itop)&&!valueforTheCurrentTopicNote.trim().equals("")) {
+            if (this.priorityHigherThan(priority,itop)&&!valueforTheCurrentTopicNote.trim().equals("")&&!topicOrParentHaveMarker(itop,"symbol-exclam")) {
                 System.out.println("\r\n\r\nScenario: "
                         + itop.getTitleText()
                         + "\r\n\r\n"
