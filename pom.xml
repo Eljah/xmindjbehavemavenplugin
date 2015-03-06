@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.eljah</groupId>
     <artifactId>xmindjbehaveplugin</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Xmind Jbehave plugin</name>
     <description>Plugin that manages JBehave stories storage in XMind mindmap file, which allows design jBehave tests right after the brainstorm</description>
