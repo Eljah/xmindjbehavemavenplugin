@@ -5,9 +5,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.w3c.dom.Element;
 import org.xmind.core.*;
+import org.xmind.core.internal.MarkerRef;
+import org.xmind.core.internal.dom.*;
 import org.xmind.core.io.ByteArrayStorage;
 import org.xmind.core.io.IStorage;
+import org.xmind.core.marker.IMarkerRef;
 
 import java.io.*;
 import java.util.Date;
@@ -26,6 +30,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             gen.outputResultsDir = new File("C:\\pegas\\target\\jbehave");
             gen.xmindpath = "C:\\pegas\\regression.xmind";
             gen.xmindprefix = "C:\\pegas\\regression";
+            gen.outputDirectory = new File("");//("C:\\pegas\\src\\test\\resources");
             gen.execute();
         } catch (MojoExecutionException e) {
             e.printStackTrace();
@@ -154,28 +159,70 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
                 IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
 
                 BufferedReader br = null;
+                BufferedReader br2 = null;
+
                 String sCurrentLine;
                 String statsfilepath = outputResultsDir.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "").replace("\\", ".") + "." + itop.getTitleText() + ".stats";
+                String specfilepath = outputDirectory.getPath() + folderBase.replace(outputResultsDir.getPath() + "\\", "") + "\\" + itop.getTitleText() + ".story";
 
 
                 System.out.println("Setting marker of " + statsfilepath + "");
 
                 try {
+                    String toBeWrittenToITop = "";
+                    try {
 
-                    br = new BufferedReader(new FileReader(statsfilepath));
+                        br = new BufferedReader(new FileReader(statsfilepath));
 
-                    while ((sCurrentLine = br.readLine()) != null) {
-                        System.out.println(sCurrentLine);
-                        if (sCurrentLine.contains("stepsFailed=")) {
-                            setMarkerToTopicAndParent(itop, "smiley-smile", "smiley-angry");
-                            System.out.println("Structure class is"+itop.getStyleId()+" "+itop.getStyleId());
-
+                        while ((sCurrentLine = br.readLine()) != null) {
+                            System.out.println(sCurrentLine);
+                            if (sCurrentLine.contains("stepsFailed=")) {
+                                setMarkerToTopicAndParent(itop, "smiley-smile", "smiley-angry");
+                            }
                         }
+                    } catch (FileNotFoundException f) {
+                        toBeWrittenToITop = "";
                     }
 
+                    try {
+                        br2 = new BufferedReader(new FileReader(specfilepath));
+                        while ((sCurrentLine = br2.readLine()) != null) {
+                            toBeWrittenToITop += sCurrentLine + "\n";
+                        }
+                    } catch (FileNotFoundException f) {
+                        toBeWrittenToITop = "";
+                    }
+                    ITopic newitop = wb.createTopic();
+                    if (!toBeWrittenToITop.equals("")) {
+                        IPlainNotesContent plainContent2 = (IPlainNotesContent) wb.createNotesContent(INotes.PLAIN);
+                        plainContent2.setTextContent(toBeWrittenToITop);
+                        INotes notes = newitop.getNotes();
+                        notes.setContent(INotes.PLAIN, plainContent2);
+                    }
+                    for (IMarkerRef mr : itop.getMarkerRefs()) {
+                        newitop.addMarker(mr.getMarkerId());
+                    }
+                    for (ITopic tp : itop.getAllChildren()) {
+                        newitop.add(tp);
+                    }
+
+                    newitop.setTitleText(itop.getTitleText());
+                    newitop.setFolded(itop.isFolded());
+
+                    itop.getParent().add(newitop);
+                    itop.getParent().remove(itop);
+
+                    //NotesImpl ni=(NotesImpl)itop.getNotes();
+                    //ni.setContent(INotes.PLAIN, plainContent);
+                    //((TopicImpl)itop).setNotes(ni);
+                    //plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
+                    //System.out.println(plainContent2.getTextContent());
+
+                    //System.out.println();
+                    //itop.
 
                 } catch (java.io.FileNotFoundException e) {
-                    System.out.println("Structure class is"+itop.getStructureClass());
+                    itop.setFolded(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -186,6 +233,8 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
                     }
                 }
 
+            } else {
+                itop.setFolded(true);
             }
         }
 
@@ -196,13 +245,14 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
         ITopic parent = itopic.getParent();
         itopic.removeMarker(markersToRemove);
         itopic.addMarker(markersToAdd);
-
+        itopic.setFolded(false);
 
         boolean flag = true;
         System.out.println("checking topic " + itopic.getTitleText());
         if (parent == null) {
         } else {
             setMarkerToTopicAndParent(parent, markersToAdd, markersToRemove);
+
         }
     }
 

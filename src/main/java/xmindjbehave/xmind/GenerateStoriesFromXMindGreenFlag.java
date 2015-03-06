@@ -23,9 +23,6 @@ import java.util.List;
  */
 @Mojo(name = "generateStoriesFromXMindGreenFlag", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo {
-    /**
-     * Location of the file.
-     */
 
     //needed for testing and debugging
     @Deprecated
@@ -33,7 +30,7 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
         GenerateStoriesFromXMindGreenFlag gen = new GenerateStoriesFromXMindGreenFlag();
         try {
             gen.outputDirectory = new File("");
-            gen.xmindpath = "C:\\pegas\\regression2.xmind";
+            gen.xmindpath = "C:\\pegas\\regression.xmind";
 
             gen.execute();
         } catch (MojoExecutionException e) {
@@ -46,7 +43,8 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
 
     @Override
     public void iterateOverTopic(ITopic itop, String offset, String folderBase, String textFromTheParentNode) throws IOException {
-        System.out.println(offset);
+
+         System.out.println(offset);
         //creating the folder to include the spec extracted from the topic note
         boolean folderCreated = (new File(folderBase)).mkdirs();
         //obtaining text from the node if it exists
