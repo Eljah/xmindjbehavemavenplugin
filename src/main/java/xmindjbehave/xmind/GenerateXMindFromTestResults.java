@@ -28,8 +28,8 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
         GenerateXMindFromTestResults gen = new GenerateXMindFromTestResults();
         try {
             gen.outputResultsDir = new File("C:\\pegas\\target\\jbehave");
-            gen.xmindpath = "C:\\pegas\\regression.xmind";
-            gen.xmindprefix = "C:\\pegas\\regression";
+            gen.xmindpath = "C:\\pegas\\example.xmind";
+            gen.xmindprefix = "C:\\pegas\\example";
             gen.outputDirectory = new File("");//("C:\\pegas\\src\\test\\resources");
             gen.useSingleOutput=true;
             gen.execute();
@@ -100,7 +100,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             INotes nt = itop.getNotes();
 
 
-            if (!nt.toString().equals("null")) {
+            //if (!nt.toString().equals("null")) {
                 IPlainNotesContent plainContent = (IPlainNotesContent) nt.getContent(INotes.PLAIN);
 
                 BufferedReader br = null;
@@ -123,7 +123,6 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
                                 //itop.removeMarker("smiley-smile");
                                 //itop.addMarker("smiley-angry");
                                 System.out.println("Setting marker of " + statsfilepath + " to smiley-angry (RED)");
-
                             } else {
                                 itop.removeMarker("smiley-angry");
                                 itop.addMarker("smiley-smile");
@@ -134,6 +133,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
 
 
                 } catch (java.io.FileNotFoundException e) {
+                    //e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -142,7 +142,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                }
+                //}
 
             }
         }
