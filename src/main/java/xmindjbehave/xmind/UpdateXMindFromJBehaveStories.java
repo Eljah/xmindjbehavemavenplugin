@@ -24,9 +24,10 @@ public class UpdateXMindFromJBehaveStories extends AbstractToXmindMojo {
         UpdateXMindFromJBehaveStories gen = new  UpdateXMindFromJBehaveStories();
         try {
             gen.outputResultsDir = new File("C:\\pegas\\target\\jbehave");
-            gen.xmindpath = "C:\\pegas\\regression.xmind";
-            gen.xmindprefix = "C:\\pegas\\regression";
-            gen.outputDirectory = new File("");//("C:\\pegas\\src\\test\\resources");
+            gen.xmindpath = "C:\\pegas\\example.xmind";
+            //gen.xmindpath = "C:\\pegas\\regression.xmind";
+            gen.xmindprefix = "C:\\example\\regression";
+            gen.outputDirectory = new File("C:\\pegas\\src\\test\\resources");
             gen.useSingleOutput=true;
             gen.execute();
         } catch (MojoExecutionException e) {
@@ -97,7 +98,7 @@ public class UpdateXMindFromJBehaveStories extends AbstractToXmindMojo {
 
                 String sCurrentLine;
                 String statsfilepath = outputResultsDir.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "").replace("\\", ".") + "." + itop.getTitleText() + ".stats";
-                String specfilepath = outputDirectory.getPath() + folderBase.replace(outputResultsDir.getPath() + "\\", "") + "\\" + itop.getTitleText() + ".story";
+                String specfilepath = outputDirectory.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "") + "\\" + itop.getTitleText() + ".story";
 
 
                 System.out.println("Setting marker of " + statsfilepath + "");
@@ -184,6 +185,10 @@ public class UpdateXMindFromJBehaveStories extends AbstractToXmindMojo {
         if (parent == null) {
             System.out.println("parent is null");
             System.out.println("current topic has " + markers + " : " + itopic.hasMarker(markers));
+            for (ITopic it: itopic.getAllChildren())
+            {
+            System.out.println(it.getMarkerRefs());
+            }
             if (itopic.hasMarker(markers)) {
                 return itopic.hasMarker(markers);
             }
