@@ -68,7 +68,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             ITopic root = isheet.getRootTopic();
             try {
                 iterateOverTopicMarkAllGreen(root, "", outputResultsDir.getPath());
-                //iterateOverTopic(root, "", outputResultsDir.getPath());
+                iterateOverTopic(root, "", outputResultsDir.getPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
