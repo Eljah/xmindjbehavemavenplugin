@@ -30,7 +30,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             gen.outputResultsDir = new File("C:\\pegas\\target\\jbehave");
             gen.xmindpath = "C:\\pegas\\example.xmind";
             gen.xmindprefix = "C:\\pegas\\example";
-            gen.outputDirectory = new File("");//("C:\\pegas\\src\\test\\resources");
+            gen.outputDirectory = new File("C:\\pegas\\src\\test\\resources\\");
             gen.useSingleOutput=true;
             gen.execute();
         } catch (MojoExecutionException e) {
@@ -68,7 +68,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
             ITopic root = isheet.getRootTopic();
             try {
                 iterateOverTopicMarkAllGreen(root, "", outputResultsDir.getPath());
-                iterateOverTopic(root, "", outputResultsDir.getPath());
+                //iterateOverTopic(root, "", outputResultsDir.getPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -169,7 +169,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
 
                 String sCurrentLine;
                 String statsfilepath = outputResultsDir.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "").replace("\\", ".") + "." + itop.getTitleText() + ".stats";
-                String specfilepath = outputDirectory.getPath() + folderBase.replace(outputResultsDir.getPath() + "\\", "") + "\\" + itop.getTitleText() + ".story";
+                String specfilepath = outputDirectory.getPath() + "\\" + folderBase.replace(outputResultsDir.getPath() + "\\", "") + "\\" + itop.getTitleText() + ".story";
 
 
                 System.out.println("Setting marker of " + statsfilepath + "");
@@ -196,6 +196,7 @@ public class GenerateXMindFromTestResults extends AbstractToXmindMojo {
                             toBeWrittenToITop += sCurrentLine + "\n";
                         }
                     } catch (FileNotFoundException f) {
+                        System.out.println("File "+specfilepath+" is not fount");
                         toBeWrittenToITop = "";
                     }
                     ITopic newitop = wb.createTopic();
