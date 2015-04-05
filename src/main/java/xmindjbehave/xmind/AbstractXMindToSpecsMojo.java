@@ -30,6 +30,9 @@ public abstract class AbstractXMindToSpecsMojo extends AbstractXMindMojo impleme
     @Parameter(property = "generateStoriesFromXMind.xmindpath", defaultValue = "tests.xmind")
     protected String xmindpath;
 
+    @Parameter(property = "hostPortOfTarget")
+    protected String hostPort;
+
     public void extractAll() throws IOException, CoreException {
         String workbookString = xmindpath;
 

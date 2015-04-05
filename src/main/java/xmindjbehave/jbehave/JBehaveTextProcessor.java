@@ -14,6 +14,7 @@ import java.io.StringReader;
  */
 public class JBehaveTextProcessor {
    public String theWholeText;
+    public String hostPort;
 
     public JBehaveTextProcessor(String wholeText) {
         this.theWholeText = wholeText;
@@ -30,7 +31,17 @@ public class JBehaveTextProcessor {
         System.out.println(jbehaveTextProcessor.run());
     }
 
+    public void setHostPort(String hostPort)
+    {
+        this.hostPort=hostPort;
+    }
+
     public String run() {
+
+        //todo to move replacemetn to the separate Meta class
+
+        theWholeText=theWholeText.replace("${MACRO:IP}",hostPort);
+
         String newWholeText = "";
         MetaTemplate meta=new MetaCombinatoricsTemplateImpl();
         BufferedReader bufReader = new BufferedReader(new StringReader(theWholeText));
@@ -61,6 +72,7 @@ public class JBehaveTextProcessor {
 
         meta=new MetaSubstituteTemplateImpl();
         newWholeText2=meta.parseMeta(newWholeText2);
+
 
         return newWholeText2.trim();
     }
