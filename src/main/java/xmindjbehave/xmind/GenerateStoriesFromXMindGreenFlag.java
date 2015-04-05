@@ -72,7 +72,7 @@ public class GenerateStoriesFromXMindGreenFlag extends AbstractXMindToSpecsMojo 
                         + "\r\n\r\n");
                 File newStoryCreated = new File(folderBase + "\\" + itop.getTitleText().replace(",","").replace("\r","").replace("\n","").replace("\"","").replace("\'","").replace(">","").replace("<","").replace("*","").replace(":","").replace(";","").replace("/","").trim() + ".story");
                 BufferedWriter writer = new BufferedWriter(new FileWriter(newStoryCreated));
-                JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(valueforTheCurrentTopicNote.trim());
+                JBehaveTextProcessor jbehaveTextParser = new JBehaveTextProcessor(valueforTheCurrentTopicNote.trim(),hostPort);
                 writer.write(jbehaveTextParser.run());
                 writer.close();
             }

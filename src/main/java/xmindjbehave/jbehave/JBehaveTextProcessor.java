@@ -4,6 +4,7 @@ import xmindjbehave.jbehave.meta.MetaCombinatoricsTemplateImpl;
 import xmindjbehave.jbehave.meta.MetaCopyPasteTemplateImpl;
 import xmindjbehave.jbehave.meta.MetaSubstituteTemplateImpl;
 import xmindjbehave.jbehave.meta.MetaTemplate;
+import xmindjbehave.xmind.AbstractXMindToSpecsMojo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +17,9 @@ public class JBehaveTextProcessor {
    public String theWholeText;
     public String hostPort;
 
-    public JBehaveTextProcessor(String wholeText) {
+    public JBehaveTextProcessor(String wholeText, String hostPort) {
         this.theWholeText = wholeText;
+        this.hostPort=hostPort;
     }
 
     public static void main(String[] args) {
@@ -26,8 +28,9 @@ public class JBehaveTextProcessor {
 
         JBehaveTextProcessor jbehaveTextProcessor = new JBehaveTextProcessor("${A:|Е642РА|116 RUS|170.0|666286|666287|666-286|666-287|}\n" +
                 "text\n${A}\n${A}\n${B:Example\n" +
-                "|Е642РВ|116 RUS|IntIncrementRange:[170,180,3]|IntIncrementRange:(666288,666290,1]|666${:IntIncrementRange:[286,288,2]}|666-${:}|666-287|\n}\n${B}");
+                "|Е642РВ|116 RUS|IntIncrementRange:[170,180,3]|IntIncrementRange:(666288,666290,1]|666${:IntIncrementRange:[286,288,2]}|666-${:}|666-287|\n}\n${B}","22");
 
+        jbehaveTextProcessor.setHostPort("22");
         System.out.println(jbehaveTextProcessor.run());
     }
 
@@ -39,6 +42,7 @@ public class JBehaveTextProcessor {
     public String run() {
 
         //todo to move replacemetn to the separate Meta class
+
 
         theWholeText=theWholeText.replace("${MACRO:IP}",hostPort);
 
